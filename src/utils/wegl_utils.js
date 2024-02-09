@@ -45,7 +45,6 @@ function createShader(gl, type, shaderText){
     } 
 
     return shader
-
 }
 
 function linkProgram(gl, vertexShader, fragmentShader){
@@ -81,17 +80,17 @@ function programFromShaderText(gl, vertexShaderText, fragmentShaderText){
     return prog;
 }
 
+//copied directly from webgl2 fundamentals - 
 function resizeCanvasToDisplaySize(canvas, multiplier) {
     multiplier = multiplier || 1;
     const width  = canvas.clientWidth  * multiplier | 0;
     const height = canvas.clientHeight * multiplier | 0;
-    console.log(width);
     if (canvas.width !== width ||  canvas.height !== height) {
       canvas.width  = width;
       canvas.height = height;
       return true;
     }
     return false;
-  }
+}
 
 export {createShader, linkProgram, programFromShaderText, resizeCanvasToDisplaySize}
