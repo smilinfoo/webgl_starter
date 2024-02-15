@@ -26,14 +26,13 @@ function app(){
 
 
 
+    //GL set up  - compiling shaders and setting how to pass data to the GPU
     let program = programFromShaderText(gl, vertText, fragText);
     let positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
     let colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     let resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
     let colorUnifromLocation = gl.getUniformLocation(program, 'u_color');
     let matrixUniformLocation = gl.getUniformLocation(program, 'u_matrix');
-
-
 
     let positionBuffer = gl.createBuffer(); 
     var vao = gl.createVertexArray();
@@ -69,14 +68,6 @@ function app(){
     window.onkeydown = keyCheck;
 
     function drawScene(){
-
-      translation[0] = 1;
-      translation[1] = 1;
-      translation[2] = -200;
-      rotation[0] += 0.01;
-      rotation[1] += 0.011;
-      rotation[2] += 0.012;
-
       //set canvas size and viewpoort size
       resizeCanvasToDisplaySize(canvas)
       //reset viewport
@@ -86,29 +77,30 @@ function app(){
       gl.clearColor(...clearColor);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
+
+      //ortho cube draw
+      translation[0] = 0;
+      translation[1] = 1;
+      translation[2] = -200;
+      rotation[0] += 0.01;
+      rotation[1] += 0.011;
+      rotation[2] += 0.012;
+
+      //draw orhto cube
       var mvp = mat4.create();
       mat4.orthoNO(mvp, -gl.canvas.clientWidth/2, gl.canvas.clientWidth/2,  -gl.canvas.clientHeight/2, gl.canvas.clientHeight/2, 0, 600);
       mat4.translate(mvp, mvp, [0,0,-100]);
       mat4.rotateX(mvp, mvp, rotation[0]);
       mat4.rotateY(mvp, mvp, rotation[1]);
       mat4.rotateZ(mvp, mvp, rotation[2]);
-    
-      // Set the matrix.
+      gl.useProgram(program);
+      gl.bindVertexArray(vao);
       gl.uniformMatrix4fv(matrixUniformLocation, false, mvp);
-      if(vaoSelect == 0){
-        gl.useProgram(program);
-        gl.bindVertexArray(vao)
-        gl.uniformMatrix4fv(matrixUniformLocation, false, mvp)
-      } else {
-
-      }
-        
-      // Draw the geometry.
       var primitiveType = gl.TRIANGLES;
       var offset = 0;
       var count = (geoArray.length / 6);  //triangle count
       gl.drawArrays(primitiveType, offset, count);
-
+      
       requestAnimationFrame(drawScene)
 
     }
